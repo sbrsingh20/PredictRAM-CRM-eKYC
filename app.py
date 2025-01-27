@@ -1,6 +1,8 @@
 import streamlit as st
 from fpdf import FPDF
 import time
+import requests
+from io import BytesIO
 
 # Step 1: Client Information Form
 def client_form():
@@ -102,7 +104,7 @@ def aadhar_otp_verification():
             st.error("Invalid OTP. Please try again.")
     return False
 
-# Step 4: Generate PDF and allow downloading
+# Step 4: Generate PDF with logo and agreement details
 def generate_pdf():
     if 'client_info' in st.session_state:
         client_info = st.session_state.client_info
@@ -112,14 +114,55 @@ def generate_pdf():
         pdf.add_page()
         pdf.set_font("Arial", size=12)
 
+        # Add the logo (fetch it from the URL)
+        logo_url = "https://predictram.com/images/logo.png"
+        logo_response = requests.get(logo_url)
+        logo_image = BytesIO(logo_response.content)
+        
+        # Add the logo image to the PDF (width, height, x position, y position)
+        pdf.image(logo_image, x=10, y=10, w=30)
+
+        # Title
         pdf.cell(200, 10, txt="EKYC Verification - Client Details", ln=True, align='C')
 
         # Add client information to the PDF
-        pdf.ln(10)
+        pdf.ln(10)  # Line break
         for key, value in client_info.items():
             if key == 'photo':  # Skip the photo in the PDF
                 continue
             pdf.cell(200, 10, f"{key.capitalize()}: {value}", ln=True)
+
+        # Add the Investment Advisor Agreement details
+        agreement_text = """
+        Investment Advisor Agreement
+
+        This Investment Advisor Agreement ("Agreement") is made and entered into by and between:
+
+        Client: {full_name}, {address}
+        and
+        Investment Advisor: [Advisor Name], [Firm Name], [Address], [City, State, ZIP Code]
+
+        Effective Date: [Effective Date of Agreement]
+
+        1. Scope of Services
+        The Advisor agrees to provide investment advisory services to the Client, which may include the following:
+        - Asset allocation and portfolio management advice
+        - Recommendations regarding the purchase, sale, or retention of securities
+        - Ongoing monitoring and review of the Client's investment portfolio
+
+        2. Client’s Responsibilities
+        The Client agrees to:
+        - Provide the Advisor with accurate and timely financial information
+        - Actively communicate with the Advisor regarding any changes in the Client's financial situation
+        - Be responsible for the final decision on all investments
+
+        3. Fees and Compensation
+        The Client agrees to pay the Advisor a fee of [Fee Structure] for the services provided under this Agreement. Payment will be made [Payment Terms: e.g., monthly, quarterly, annually].
+        """.format(full_name=client_info['full_name'], address=client_info['address'])
+
+        # Add agreement text
+        pdf.ln(10)  # Line break
+        pdf.multi_cell(0, 10, agreement_text)
 
         # Save the PDF
         pdf_output_path = "ekyc_client_details.pdf"
