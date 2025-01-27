@@ -36,7 +36,7 @@ def ekyc_form():
     # Simulating OTP
     if aadhar_number:
         aadhar_otp = random.randint(1000, 9999)  # Simulate Aadhar OTP generation
-        otp_input = st.text_input(f"Enter OTP sent to Aadhar Number {aadhar_number}:")
+        otp_input = st.text_input(f"Enter OTP sent to Aadhar Number {aadhar_number}:", key="otp_input")
         if otp_input and otp_input == str(aadhar_otp):
             st.success("eKYC Verified!")
             
@@ -98,8 +98,8 @@ def investment_advisor_agreement(client_name, client_address, client_aadhar):
     """
     st.markdown(agreement_text)
     
-    # Aadhar OTP for Agreement signing
-    otp_input = st.text_input(f"Enter OTP sent to Aadhar Number {client_aadhar}:")
+    # Aadhar OTP for Agreement signing with a unique key
+    otp_input = st.text_input(f"Enter OTP sent to Aadhar Number {client_aadhar}:", key="agreement_otp_input")
     if otp_input and otp_input == "1100":
         st.success("Agreement Signed Successfully!")
         st.write("You have successfully signed the Investment Advisor Agreement.")
