@@ -113,7 +113,10 @@ def generate_pdf():
         # Create a PDF document
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size=12)
+
+        # Use a Unicode-compatible font like DejaVuSans
+        pdf.add_font("DejaVuSans", "", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", uni=True) 
+        pdf.set_font("DejaVuSans", size=12)
 
         # Add the logo (fetch it from the URL and save it as a temporary file)
         logo_url = "https://predictram.com/images/logo.png"
