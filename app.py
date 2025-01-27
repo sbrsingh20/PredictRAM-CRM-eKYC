@@ -131,7 +131,6 @@ def generate_pdf():
 
 # Main Flow
 def main():
-    # Check if client information is already in session
     if 'client_info' not in st.session_state:
         # Step 1: Collect client details via the form
         if client_form():
@@ -142,7 +141,18 @@ def main():
                     # Step 4: Generate and allow PDF download
                     generate_pdf()
     else:
-        st.warning("eKYC process is already completed. Please proceed with downloading the PDF.")
+        # eKYC process already completed, allow user to input OTP to download PDF
+        st.warning("eKYC process is already completed. Please input OTP to download the PDF.")
+
+        # Ask for OTP verification if the process is completed
+        aadhar_otp = st.text_input("Enter Aadhar OTP (e.g., 1100)", max_chars=4)
+
+        if st.button('Verify OTP'):
+            if aadhar_otp == "1100":
+                st.success("eKYC Verified successfully!")
+                generate_pdf()  # Generate the PDF for download
+            else:
+                st.error("Invalid OTP. Please try again.")
 
 if __name__ == "__main__":
     main()
