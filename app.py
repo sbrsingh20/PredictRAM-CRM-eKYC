@@ -1,7 +1,6 @@
 import streamlit as st
-import pandas as pd
-from fpdf import FPDF
 import random
+from fpdf import FPDF
 
 # Function to generate PDF from form data
 def generate_pdf(data):
@@ -33,31 +32,33 @@ def ekyc_form():
     bank_account = st.text_input("Bank Account Details (optional)")
     aadhar_number = st.text_input("Aadhar Number")
     
-    # Simulating OTP
+    # Simulate OTP (generated once for verification)
     if aadhar_number:
         aadhar_otp = random.randint(1000, 9999)  # Simulate Aadhar OTP generation
         otp_input = st.text_input(f"Enter OTP sent to Aadhar Number {aadhar_number}:", key="otp_input")
-        if otp_input and otp_input == str(aadhar_otp):
-            st.success("eKYC Verified!")
-            
-            # Collecting the data for PDF generation
-            data = {
-                "Full Name": full_name,
-                "Date of Birth": dob,
-                "Address": address,
-                "Email ID": email,
-                "Mobile Number": mobile,
-                "PAN": pan,
-                "Bank Account": bank_account,
-                "Aadhar Number": aadhar_number
-            }
-            
-            # Generate and provide the PDF download link
-            pdf_file = generate_pdf(data)
-            with open(pdf_file, "rb") as pdf:
-                st.download_button("Download eKYC PDF", pdf, file_name="eKYC_Details.pdf", mime="application/pdf")
-        else:
-            st.warning("Invalid OTP. Please try again.")
+        
+        if otp_input:
+            if otp_input == str(aadhar_otp):
+                st.success("eKYC Verified!")
+                
+                # Collecting the data for PDF generation
+                data = {
+                    "Full Name": full_name,
+                    "Date of Birth": dob,
+                    "Address": address,
+                    "Email ID": email,
+                    "Mobile Number": mobile,
+                    "PAN": pan,
+                    "Bank Account": bank_account,
+                    "Aadhar Number": aadhar_number
+                }
+                
+                # Generate and provide the PDF download link
+                pdf_file = generate_pdf(data)
+                with open(pdf_file, "rb") as pdf:
+                    st.download_button("Download eKYC PDF", pdf, file_name="eKYC_Details.pdf", mime="application/pdf")
+            else:
+                st.warning("Invalid OTP. Please try again.")
     
     return full_name, address, aadhar_number
 
@@ -93,13 +94,12 @@ def investment_advisor_agreement(client_name, client_address, client_aadhar):
 
     3. Fees and Compensation
     The Client agrees to pay the Advisor a fee of [Fee Structure] for the services provided under this Agreement. Payment will be made [Payment Terms: e.g., monthly, quarterly, annually].
-
-    Please enter your Aadhar OTP to sign this agreement:
     """
+    
     st.markdown(agreement_text)
     
     # Aadhar OTP for Agreement signing with a unique key
-    otp_input = st.text_input(f"Enter OTP sent to Aadhar Number {client_aadhar}:", key="agreement_otp_input")
+    otp_input = st.text_input(f"Enter OTP sent to Aadhar Number {client_aadhar} to Sign Agreement:", key="agreement_otp_input")
     if otp_input and otp_input == "1100":
         st.success("Agreement Signed Successfully!")
         st.write("You have successfully signed the Investment Advisor Agreement.")
