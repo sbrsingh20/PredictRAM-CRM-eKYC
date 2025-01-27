@@ -3,6 +3,7 @@ from fpdf import FPDF
 import time
 import requests
 from io import BytesIO
+import tempfile
 
 # Step 1: Client Information Form
 def client_form():
@@ -114,13 +115,17 @@ def generate_pdf():
         pdf.add_page()
         pdf.set_font("Arial", size=12)
 
-        # Add the logo (fetch it from the URL)
+        # Add the logo (fetch it from the URL and save it as a temporary file)
         logo_url = "https://predictram.com/images/logo.png"
         logo_response = requests.get(logo_url)
-        logo_image = BytesIO(logo_response.content)
         
+        # Create a temporary file to save the logo
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as tmp_logo_file:
+            tmp_logo_file.write(logo_response.content)
+            tmp_logo_file_path = tmp_logo_file.name
+
         # Add the logo image to the PDF (width, height, x position, y position)
-        pdf.image(logo_image, x=10, y=10, w=30)
+        pdf.image(tmp_logo_file_path, x=10, y=10, w=30)
 
         # Title
         pdf.cell(200, 10, txt="EKYC Verification - Client Details", ln=True, align='C')
