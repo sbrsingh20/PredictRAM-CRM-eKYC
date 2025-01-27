@@ -8,10 +8,10 @@ def generate_pdf(data):
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     
-    pdf.cell(200, 10, txt="eKYC and Agreement Details", ln=True, align='C')
-    
     # Add eKYC Details
+    pdf.cell(200, 10, txt="eKYC and Agreement Details", ln=True, align='C')
     pdf.cell(200, 10, txt="eKYC Details", ln=True, align='L')
+    
     for key, value in data['ekyc'].items():
         pdf.cell(200, 10, txt=f"{key}: {value}", ln=True)
     
